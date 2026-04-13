@@ -5,8 +5,349 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FullstackTestCS"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="Gestão de Alunos" Height="620" Width="900"
+        Background="#0F0F14"
+        WindowStartupLocation="CenterScreen"
+        FontFamily="Segoe UI">
 
+    <Window.Resources>
+        <!-- Cores -->
+        <SolidColorBrush x:Key="BgPrimary"     Color="#0F0F14"/>
+        <SolidColorBrush x:Key="BgCard"        Color="#1A1A24"/>
+        <SolidColorBrush x:Key="BgInput"       Color="#12121A"/>
+        <SolidColorBrush x:Key="AccentCyan"    Color="#00D4FF"/>
+        <SolidColorBrush x:Key="AccentMagenta" Color="#FF2D78"/>
+        <SolidColorBrush x:Key="TextPrimary"   Color="#E8E8F0"/>
+        <SolidColorBrush x:Key="TextMuted"     Color="#6B6B8A"/>
+        <SolidColorBrush x:Key="BorderColor"   Color="#2A2A3A"/>
+
+        <!-- Estilo de TextBox -->
+        <Style x:Key="ModernInput" TargetType="TextBox">
+            <Setter Property="Background"         Value="#12121A"/>
+            <Setter Property="Foreground"         Value="#E8E8F0"/>
+            <Setter Property="BorderBrush"        Value="#2A2A3A"/>
+            <Setter Property="BorderThickness"    Value="1"/>
+            <Setter Property="Padding"            Value="10,8"/>
+            <Setter Property="FontSize"           Value="13"/>
+            <Setter Property="CaretBrush"         Value="#00D4FF"/>
+            <Setter Property="SelectionBrush"     Value="#00D4FF40"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6">
+                            <ScrollViewer x:Name="PART_ContentHost"
+                                          Margin="{TemplateBinding Padding}"
+                                          VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="BorderBrush" Value="#00D4FF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Estilo de Button principal -->
+        <Style x:Key="BtnPrimary" TargetType="Button">
+            <Setter Property="Background"      Value="#00D4FF"/>
+            <Setter Property="Foreground"      Value="#0F0F14"/>
+            <Setter Property="FontWeight"      Value="SemiBold"/>
+            <Setter Property="FontSize"        Value="12"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding"         Value="18,9"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="6"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#33DDFF"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#00AACC"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Estilo de Button perigo -->
+        <Style x:Key="BtnDanger" TargetType="Button">
+            <Setter Property="Background"      Value="#FF2D78"/>
+            <Setter Property="Foreground"      Value="#FFFFFF"/>
+            <Setter Property="FontWeight"      Value="SemiBold"/>
+            <Setter Property="FontSize"        Value="12"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding"         Value="18,9"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="6"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#FF5595"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#CC2260"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Estilo de Button secundário (outline) -->
+        <Style x:Key="BtnSecondary" TargetType="Button">
+            <Setter Property="Background"      Value="Transparent"/>
+            <Setter Property="Foreground"      Value="#E8E8F0"/>
+            <Setter Property="FontWeight"      Value="SemiBold"/>
+            <Setter Property="FontSize"        Value="12"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="BorderBrush"     Value="#2A2A3A"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding"         Value="18,9"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#2A2A3A"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Estilo DataGrid -->
+        <Style x:Key="ModernGrid" TargetType="DataGrid">
+            <Setter Property="Background"              Value="Transparent"/>
+            <Setter Property="Foreground"              Value="#E8E8F0"/>
+            <Setter Property="BorderBrush"             Value="#2A2A3A"/>
+            <Setter Property="BorderThickness"         Value="1"/>
+            <Setter Property="GridLinesVisibility"     Value="Horizontal"/>
+            <Setter Property="HorizontalGridLinesBrush" Value="#1E1E2E"/>
+            <Setter Property="RowBackground"           Value="Transparent"/>
+            <Setter Property="AlternatingRowBackground" Value="#15151F"/>
+            <Setter Property="HeadersVisibility"       Value="Column"/>
+            <Setter Property="SelectionMode"           Value="Single"/>
+            <Setter Property="AutoGenerateColumns"     Value="False"/>
+            <Setter Property="CanUserAddRows"          Value="False"/>
+            <Setter Property="CanUserDeleteRows"       Value="False"/>
+            <Setter Property="IsReadOnly"              Value="True"/>
+            <Setter Property="FontSize"                Value="13"/>
+            <Setter Property="RowHeight"               Value="40"/>
+        </Style>
+
+        <Style TargetType="DataGridColumnHeader">
+            <Setter Property="Background"    Value="#1A1A24"/>
+            <Setter Property="Foreground"    Value="#00D4FF"/>
+            <Setter Property="FontWeight"    Value="SemiBold"/>
+            <Setter Property="FontSize"      Value="11"/>
+            <Setter Property="Padding"       Value="12,10"/>
+            <Setter Property="BorderBrush"   Value="#2A2A3A"/>
+            <Setter Property="BorderThickness" Value="0,0,1,1"/>
+        </Style>
+
+        <Style TargetType="DataGridCell">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding"         Value="12,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DataGridCell">
+                        <Border Background="{TemplateBinding Background}"
+                                Padding="12,0">
+                            <ContentPresenter VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="#00D4FF20"/>
+                    <Setter Property="Foreground" Value="#FFFFFF"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="DataGridRow">
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="#00D4FF15"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#1E1E30"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="LabelStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#6B6B8A"/>
+            <Setter Property="FontSize"   Value="11"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin"     Value="0,0,0,4"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="64"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Background="#1A1A24" BorderBrush="#2A2A3A" BorderThickness="0,0,0,1">
+            <Grid Margin="28,0">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <!-- Ícone / logo -->
+                    <Border Width="32" Height="32" CornerRadius="8" Background="#00D4FF20"
+                            Margin="0,0,12,0">
+                        <TextBlock Text="A" Foreground="#00D4FF" FontWeight="Bold"
+                                   FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="GESTÃO DE ALUNOS"
+                                   Foreground="#E8E8F0"
+                                   FontWeight="Bold"
+                                   FontSize="14"/>
+                        <TextBlock Text="FullstackTestCS · MySQL" Foreground="#6B6B8A" FontSize="11"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Status badge -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <Ellipse Width="7" Height="7" Fill="#00D4FF" Margin="0,0,6,0"/>
+                    <TextBlock x:Name="TxtStatus" Text="Conectado" Foreground="#6B6B8A" FontSize="12"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Conteúdo principal -->
+        <Grid Grid.Row="1" Margin="24">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="280"/>
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Painel de formulário (esquerda) -->
+            <Border Grid.Column="0" Background="#1A1A24" CornerRadius="10"
+                    BorderBrush="#2A2A3A" BorderThickness="1">
+                <StackPanel Margin="20">
+
+                    <TextBlock Text="FORMULÁRIO"
+                               Foreground="#6B6B8A"
+                               FontSize="10"
+                               FontWeight="Bold"
+                               Margin="0,0,0,20"/>
+
+                    <!-- ID (somente leitura) -->
+                    <TextBlock Text="ID" Style="{StaticResource LabelStyle}"/>
+                    <TextBox x:Name="TxtId" Style="{StaticResource ModernInput}"
+                             IsReadOnly="True" Foreground="#6B6B8A"
+                             Margin="0,0,0,14"/>
+
+                    <!-- Nome -->
+                    <TextBlock Text="NOME" Style="{StaticResource LabelStyle}"/>
+                    <TextBox x:Name="TxtNome"
+                             Style="{StaticResource ModernInput}"
+                             Margin="0,0,0,14"/>
+
+                    <!-- Idade -->
+                    <TextBlock Text="IDADE" Style="{StaticResource LabelStyle}"/>
+                    <TextBox x:Name="TxtIdade"
+                             Style="{StaticResource ModernInput}"
+                             Margin="0,0,0,24"/>
+
+                    <!-- Botões CRUD -->
+                    <Button x:Name="BtnInserir" Content="＋  INSERIR" Style="{StaticResource BtnPrimary}"
+                            HorizontalAlignment="Stretch" Margin="0,0,0,8"
+                            Click="BtnInserir_Click"/>
+
+                    <Button x:Name="BtnAtualizar" Content="✎  ATUALIZAR" Style="{StaticResource BtnSecondary}"
+                            HorizontalAlignment="Stretch" Margin="0,0,0,8"
+                            Click="BtnAtualizar_Click"/>
+
+                    <Button x:Name="BtnDeletar" Content="✕  DELETAR" Style="{StaticResource BtnDanger}"
+                            HorizontalAlignment="Stretch" Margin="0,0,0,16"
+                            Click="BtnDeletar_Click"/>
+
+                    <Separator Background="#2A2A3A" Margin="0,0,0,16"/>
+
+                    <Button x:Name="BtnLimpar" Content="Limpar campos" Style="{StaticResource BtnSecondary}"
+                            HorizontalAlignment="Stretch" Click="BtnLimpar_Click"/>
+
+                    <!-- Mensagem de feedback -->
+                    <Border x:Name="PanelMsg" CornerRadius="6" Margin="0,16,0,0"
+                            Padding="12,8" Visibility="Collapsed">
+                        <TextBlock x:Name="TxtMsg" TextWrapping="Wrap"
+                                   FontSize="12" FontWeight="SemiBold"/>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+            <!-- Painel de listagem (direita) -->
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="12"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Toolbar superior -->
+                <Grid Grid.Row="0">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="ALUNOS"
+                                   Foreground="#E8E8F0"
+                                   FontWeight="Bold"
+                                   FontSize="14"
+                                   VerticalAlignment="Center"/>
+                        <Border Background="#00D4FF20" CornerRadius="20"
+                                Padding="8,2" Margin="10,0,0,0" VerticalAlignment="Center">
+                            <TextBlock x:Name="TxtContagem" Text="0 registros"
+                                       Foreground="#00D4FF" FontSize="11" FontWeight="SemiBold"/>
+                        </Border>
+                    </StackPanel>
+                    <Button x:Name="BtnAtualizar2" Content="↻  RECARREGAR" Style="{StaticResource BtnSecondary}"
+                            HorizontalAlignment="Right" Click="BtnRecarregar_Click"/>
+                </Grid>
+
+                <!-- DataGrid -->
+                <Border Grid.Row="2" CornerRadius="10" BorderBrush="#2A2A3A" BorderThickness="1"
+                        ClipToBounds="True">
+                    <DataGrid x:Name="GridAlunos" Style="{StaticResource ModernGrid}"
+                              SelectionChanged="GridAlunos_SelectionChanged">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID"    Binding="{Binding id}"    Width="70"/>
+                            <DataGridTextColumn Header="NOME"  Binding="{Binding nome}"  Width="*"/>
+                            <DataGridTextColumn Header="IDADE" Binding="{Binding idade}" Width="90"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Border>
+            </Grid>
+        </Grid>
     </Grid>
 </Window>
