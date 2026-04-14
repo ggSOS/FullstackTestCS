@@ -1,7 +1,7 @@
 # FullstackTestCS
 Exercício de FullStack para C# com WPF para FrontEnd e Ado.net com MySql + controle de migração com DbUp para BackEnd.
 
-![Tela do Programa em Execução](FullstackTestCS\static\image.png)
+![Tela do Programa em Execução](FullstackTestCS/static/image.png)
 
 ## Requisitos
 - Instalar pacotes assim como o modelo a seguir:
