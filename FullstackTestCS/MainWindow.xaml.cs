@@ -1,22 +1,12 @@
 ﻿using Microsoft.Extensions.Configuration;
 using MySqlConnector;
-using System.Reflection;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace FullstackTestCS
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         private string _connectionString = string.Empty;
@@ -29,9 +19,7 @@ namespace FullstackTestCS
             CarregarAlunos();
         }
 
-        // ─────────────────────────────────────────────
-        // Inicialização
-        // ─────────────────────────────────────────────
+        // Iniciar conexao mysql
         private void InicializarConexao()
         {
             try
@@ -59,9 +47,7 @@ namespace FullstackTestCS
             }
         }
 
-        // ─────────────────────────────────────────────
-        // Carregar / SELECT
-        // ─────────────────────────────────────────────
+        // Select *
         private void CarregarAlunos()
         {
             try
@@ -85,7 +71,8 @@ namespace FullstackTestCS
                 }
 
                 GridAlunos.ItemsSource = lista;
-                TxtContagem.Text = $"{lista.Count} registro{(lista.Count != 1 ? "s" : "")}";
+                AtualizarContador(lista.Count);
+                AtualizarAvisoVazio(lista.Count);
             }
             catch (Exception ex)
             {
@@ -93,9 +80,78 @@ namespace FullstackTestCS
             }
         }
 
-        // ─────────────────────────────────────────────
-        // Inserir
-        // ─────────────────────────────────────────────
+        // Select por ID
+        private void BtnBuscar_Click(object sender, RoutedEventArgs e) => BuscarPorId();
+
+        private void TxtBuscaId_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter) BuscarPorId();
+        }
+
+        private void BuscarPorId()
+        {
+            var texto = TxtBuscaId.Text.Trim();
+            if (string.IsNullOrWhiteSpace(texto))
+            {
+                MostrarMsg("Digite um ID para buscar.", sucesso: false);
+                return;
+            }
+
+            if (!int.TryParse(texto, out int id))
+            {
+                MostrarMsg("O ID deve ser um número inteiro.", sucesso: false);
+                return;
+            }
+
+            try
+            {
+                using var conn = new MySqlConnection(_connectionString);
+                conn.Open();
+
+                string sql = $"SELECT id, nome, idade FROM {Table} WHERE id = @id;";
+                using var cmd = new MySqlCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@id", id);
+                using var reader = cmd.ExecuteReader();
+
+                var lista = new List<dynamic>();
+                while (reader.Read())
+                {
+                    lista.Add(new
+                    {
+                        id = reader["id"],
+                        nome = reader["nome"].ToString(),
+                        idade = reader["idade"]
+                    });
+                }
+
+                GridAlunos.ItemsSource = lista;
+                AtualizarContador(lista.Count, filtrado: true);
+
+                if (lista.Count == 0)
+                {
+                    AtualizarAvisoVazio(0, mensagemBusca: $"Nenhum aluno com ID {id}.");
+                    MostrarMsg($"Nenhum aluno encontrado com ID {id}.", sucesso: false);
+                }
+                else
+                {
+                    AtualizarAvisoVazio(lista.Count);
+                    MostrarMsg($"Aluno de ID {id} encontrado.", sucesso: true);
+                }
+            }
+            catch (Exception ex)
+            {
+                MostrarMsg($"Erro na busca: {ex.Message}", sucesso: false);
+            }
+        }
+
+        private void BtnVerTodos_Click(object sender, RoutedEventArgs e)
+        {
+            TxtBuscaId.Text = string.Empty;
+            CarregarAlunos();
+            PanelMsg.Visibility = Visibility.Collapsed;
+        }
+
+        // Insert
         private void BtnInserir_Click(object sender, RoutedEventArgs e)
         {
             if (!ValidarNomeIdade(out string nome, out int idade)) return;
@@ -113,9 +169,7 @@ namespace FullstackTestCS
             }
         }
 
-        // ─────────────────────────────────────────────
-        // Atualizar
-        // ─────────────────────────────────────────────
+        // Update
         private void BtnAtualizar_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(TxtId.Text))
@@ -142,9 +196,7 @@ namespace FullstackTestCS
             }
         }
 
-        // ─────────────────────────────────────────────
-        // Deletar
-        // ─────────────────────────────────────────────
+        // Delete
         private void BtnDeletar_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(TxtId.Text))
@@ -177,24 +229,20 @@ namespace FullstackTestCS
             }
         }
 
-        // ─────────────────────────────────────────────
-        // Recarregar
-        // ─────────────────────────────────────────────
+        // Dar refresh no Select
         private void BtnRecarregar_Click(object sender, RoutedEventArgs e)
         {
+            TxtBuscaId.Text = string.Empty;
             CarregarAlunos();
             MostrarMsg("Lista recarregada.", sucesso: true);
         }
 
-        // ─────────────────────────────────────────────
-        // Limpar campos
-        // ─────────────────────────────────────────────
+        // Limpar forms
         private void BtnLimpar_Click(object sender, RoutedEventArgs e)
         {
             LimparCampos();
             PanelMsg.Visibility = Visibility.Collapsed;
         }
-
         private void LimparCampos()
         {
             TxtId.Text = string.Empty;
@@ -203,23 +251,46 @@ namespace FullstackTestCS
             GridAlunos.SelectedItem = null;
         }
 
-        // ─────────────────────────────────────────────
-        // Seleção na DataGrid → preenche formulário
-        // ─────────────────────────────────────────────
+        // Atalho para update (pegar informacoes ao selecionar)
         private void GridAlunos_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (GridAlunos.SelectedItem is not { } item) return;
 
-            // Acessa as propriedades via reflexão (tipo anônimo dinâmico)
             var tipo = item.GetType();
             TxtId.Text = tipo.GetProperty("id")?.GetValue(item)?.ToString() ?? "";
             TxtNome.Text = tipo.GetProperty("nome")?.GetValue(item)?.ToString() ?? "";
             TxtIdade.Text = tipo.GetProperty("idade")?.GetValue(item)?.ToString() ?? "";
         }
 
-        // ─────────────────────────────────────────────
-        // Helpers de UI
-        // ─────────────────────────────────────────────
+        // Validacao dos forms
+        private void AtualizarContador(int count, bool filtrado = false)
+        {
+            if (filtrado && count > 0)
+                TxtContagem.Text = "1 resultado";
+            else
+                TxtContagem.Text = $"{count} registro{(count != 1 ? "s" : "")}";
+        }
+        private void AtualizarAvisoVazio(int count, string? mensagemBusca = null)
+        {
+            if (count == 0)
+            {
+                PanelVazio.Visibility = Visibility.Visible;
+                if (mensagemBusca != null)
+                {
+                    TxtVazio.Text = mensagemBusca;
+                    TxtVazioSub.Text = "Tente outro ID ou clique em \"Ver Todos\".";
+                }
+                else
+                {
+                    TxtVazio.Text = "Nenhum aluno cadastrado";
+                    TxtVazioSub.Text = "Insira um aluno pelo formulário ao lado.";
+                }
+            }
+            else
+            {
+                PanelVazio.Visibility = Visibility.Collapsed;
+            }
+        }
         private bool ValidarNomeIdade(out string nome, out int idade)
         {
             nome = TxtNome.Text.Trim();
@@ -239,7 +310,6 @@ namespace FullstackTestCS
 
             return true;
         }
-
         private void MostrarMsg(string texto, bool sucesso)
         {
             TxtMsg.Text = texto;
@@ -262,6 +332,7 @@ namespace FullstackTestCS
             PanelMsg.Visibility = Visibility.Visible;
         }
 
+        // Status da conexao com mysql
         private void MostrarStatus(bool conectado)
         {
             TxtStatus.Text = conectado ? "Conectado" : "Sem conexão";

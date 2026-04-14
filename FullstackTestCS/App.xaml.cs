@@ -15,7 +15,6 @@ namespace FullstackTestCS
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            // SEMPRE chame a base primeiro para o WPF funcionar normalmente
             base.OnStartup(e);
             ExecutarMigracoesBanco();
         }
@@ -53,17 +52,17 @@ namespace FullstackTestCS
             }
             catch (FormatException e)
             {
-                System.Console.WriteLine("Erro de conversao:\n" + e.Message);
+                MessageBox.Show("Erro de conversao:\n" + e.Message);
 
             }
             catch (ArgumentNullException e)
             {
-                System.Console.WriteLine("Erro de conversao(variavel nula):\n" + e.Message);
+                MessageBox.Show("Erro de conversao(variavel nula):\n" + e.Message);
 
             }
             catch (MySqlException e)
             {
-                Console.WriteLine("Erro ao conectar:\n" + e.Message);
+                MessageBox.Show("Erro ao conectar ao banco:\n" + e.Message);
             }
         }
 
@@ -184,12 +183,12 @@ namespace FullstackTestCS
             }
             catch (FormatException e)
             {
-                System.Console.WriteLine("Erro de conversao:\n" + e.Message);
+                Console.WriteLine("Erro de conversao:\n" + e.Message);
 
             }
             catch (ArgumentNullException e)
             {
-                System.Console.WriteLine("Erro de conversao(variavel nula):\n" + e.Message);
+                Console.WriteLine("Erro de conversao(variavel nula):\n" + e.Message);
 
             }
             catch (MySqlException e)
